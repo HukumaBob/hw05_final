@@ -6,7 +6,7 @@ from .models import Group, Post, Follow
 from .forms import PostForm, CommentForm
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
-
+from django.views.decorators.cache import cache_page
 
 POSTS_PER_PAGE = 10
 
@@ -24,6 +24,7 @@ def get_page_context(queryset, request):
     }
 
 
+@cache_page(20, key_prefix='index_page')
 def index(request):
     context = get_page_context(Post.objects.all(), request)
     return render(request, 'posts/index.html', context)
@@ -45,8 +46,7 @@ def profile(request, username):
     template = 'posts/profile.html'
     author = get_object_or_404(User, username=username)  
     following = (
-        Follow.objects.filter(user_id=request.user.id,
-                              author_id=author.id)
+        author.following.filter(user_id=request.user.id)
     ).exists()
     context = {
         'author': author,
@@ -132,8 +132,8 @@ def add_comment(request, post_id):
 def follow_index(request):
     # информация о текущем пользователе доступна в переменной request.user  
     author = Follow.objects.filter(user_id=request.user.id).values('author_id')    
-    authors = Post.objects.filter(author_id__in=author)    
-    context = get_page_context(authors, request)    
+    authors = Post.objects.filter(author_id__in=author)
+    context = get_page_context(authors, request)
     return render(request, 'posts/follow.html', context)
 
 
@@ -151,7 +151,7 @@ def profile_follow(request, username):
         'author': author,
         'following': True,
     }
-    Follow.objects.create(author_id=author.id, user_id=request.user.id)
+    author.following.create(user_id=request.user.id)
     context.update(get_page_context(author.posts.all(), request))
     return render(request, template, context)
 
@@ -161,10 +161,7 @@ def profile_unfollow(request, username):
     # Дизлайк, отписка
     template = 'posts/profile.html'
     author = User.objects.get(username=username)
-    Follow.objects.get(
-        author_id=author.id,
-        user_id=request.user.id
-    ).delete()
+    author.following.get(user_id=request.user.id).delete()
     context = {
         'author': author,
         'following': False,

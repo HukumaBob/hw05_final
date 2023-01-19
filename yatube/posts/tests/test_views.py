@@ -5,6 +5,7 @@ from django.contrib.auth import get_user_model
 from django.test import Client, TestCase
 from django.urls import reverse
 from posts.models import Group, Post
+from django.core.cache import cache
 
 User = get_user_model()
 
@@ -44,6 +45,7 @@ class PaginatorViewsTest(TestCase):
             reverse('posts:profile', kwargs={'username': self.user.username})
             + url_addon,
         )
+        cache.clear()
         for reverse_name in templates_page_names:
             with self.subTest(reverse_name=reverse_name):
                 response = self.guest_client.get(reverse_name)
@@ -100,6 +102,7 @@ class PostViewsTest(TestCase):
             reverse('posts:group_list', kwargs={'slug': self.group.slug}),
             reverse('posts:profile', kwargs={'username': self.user.username})
         )
+        cache.clear()
         for reverse_name in templates_page_names:
             with self.subTest(reverse_name=reverse_name):
                 response = self.authorized_client.get(reverse_name)
@@ -186,6 +189,7 @@ class PostCreateTest(TestCase):
             'Profile':
             reverse('posts:profile', kwargs={'username': self.user.username}),
         }
+        cache.clear()
         for page, reverse_name in templates_page_names.items():
             with self.subTest(page=page):
                 response = self.authorized_client.get(reverse_name)

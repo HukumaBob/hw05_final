@@ -6,6 +6,7 @@ from django.contrib.auth import get_user_model
 from django.test import Client, TestCase
 from django.urls import reverse
 from posts.models import Group, Post
+from django.core.cache import cache
 
 User = get_user_model()
 
@@ -97,7 +98,9 @@ class URLTests(TestCase):
             reverse('posts:post_edit', kwargs={'post_id': self.post.pk}):
             'posts/create_post.html',
             reverse('posts:post_create'): 'posts/create_post.html',
+            '/unexisting_page/': 'core/404.html',
         }
+        cache.clear()
         for url_pages, template in url_to_template.items():
             with self.subTest(url_pages=url_pages):
                 response = self.autorized_author.get(url_pages)
@@ -118,6 +121,7 @@ class URLTests(TestCase):
             'posts/post_detail.html',
             reverse('posts:post_create'): 'posts/create_post.html',
         }
+        cache.clear()
         for url_pages, template in url_to_template.items():
             with self.subTest(url_pages=url_pages):
                 response = self.autorized_user.get(url_pages, follow=True)
