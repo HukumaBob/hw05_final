@@ -1,14 +1,9 @@
-import os
-import shutil
-import tempfile
+"""Tests of cache."""
 
-from http import HTTPStatus
-
-from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.test import Client, TestCase
 from django.urls import reverse
-from posts.models import Group, Post
+from posts.models import Post
 from django.core.cache import cache
 
 User = get_user_model()

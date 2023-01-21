@@ -1,7 +1,7 @@
 """List of main models."""
 
 from django.core.paginator import Paginator
-from django.shortcuts import get_list_or_404, get_object_or_404, render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 from .models import Group, Post, Follow
 from .forms import PostForm, CommentForm
 from django.contrib.auth import get_user_model
@@ -65,8 +65,8 @@ def post_detail(request, post_id):
     comments = post.comments.all()
     context = {
         'post': post,
-        'form': form,
         'comments': comments,
+        'form': form,
     }
     return render(request, template, context)
 
