@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
-{% block title %}Последние обновления на сайте{% endblock %}
+{% block title %}Избранные авторы{% endblock %}
 {% block content %}
+<h1>Избранные авторы</h1>
   {% include 'posts/includes/switcher.html' %}
   {% for post in page_obj %}  
   {% include 'posts/includes/post_list.html' %}

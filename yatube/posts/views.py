@@ -141,31 +141,20 @@ def follow_index(request):
 @login_required
 def profile_follow(request, username):
     """Subscribe to author."""
-    template = 'posts/profile.html'
+    template = redirect('posts:profile', username=username)
     author = get_object_or_404(User, username=username)
-    is_following = bool(
-        author.following.filter(user_id=request.user.id).count()
+    is_following = (
+        author.following.filter(user_id=request.user.id).exists()
     )
     if (username == request.user.username) or (is_following):
-        return redirect('posts:profile', username=username)
-    context = {
-        'author': author,
-        'following': True,
-    }
+        return template
     author.following.create(user_id=request.user.id)
-    context.update(get_page_context(author.posts.all(), request))
-    return render(request, template, context)
+    return template
 
 
 @login_required
 def profile_unfollow(request, username):
     """Unsubscribe."""
-    template = 'posts/profile.html'
     author = User.objects.get(username=username)
     author.following.get(user_id=request.user.id).delete()
-    context = {
-        'author': author,
-        'following': False,
-    }
-    context.update(get_page_context(author.posts.all(), request))
-    return render(request, template, context)
+    return redirect('posts:profile', username=username)
