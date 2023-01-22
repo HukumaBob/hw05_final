@@ -2,7 +2,6 @@
 
 import shutil
 import tempfile
-
 from http import HTTPStatus
 
 from django.conf import settings

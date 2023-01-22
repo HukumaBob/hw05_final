@@ -1,6 +1,6 @@
 """List of main models."""
-from django.contrib.auth import get_user_model
 from core.models import CreatedModel
+from django.contrib.auth import get_user_model
 from django.db import models
 
 User = get_user_model()
@@ -57,7 +57,7 @@ class Post(models.Model):
     def __str__(self):
         """Posts name."""
 
-        return self.text[:15]        
+        return self.text[:15]
 
 
 class Comment(CreatedModel):

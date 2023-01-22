@@ -1,8 +1,7 @@
 """Useful forms for creating new posts."""
-
 from django import forms
 
-from .models import Post, Comment
+from posts.models import Comment, Post
 
 
 class PostForm(forms.ModelForm):

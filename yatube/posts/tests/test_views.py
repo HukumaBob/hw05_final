@@ -2,10 +2,10 @@
 
 from django import forms
 from django.contrib.auth import get_user_model
+from django.core.cache import cache
 from django.test import Client, TestCase
 from django.urls import reverse
 from posts.models import Comment, Group, Post
-from django.core.cache import cache
 
 User = get_user_model()
 
@@ -356,7 +356,7 @@ class FollowTest(TestCase):
             follow=True
         )
         responce = self.follower_01.get(template_page['Follow_page'])
-        post_object_01 = len(responce.context.get('page_obj').object_list)        
+        post_object_01 = len(responce.context.get('page_obj').object_list)
         responce = self.follower_02.get(template_page['Follow_page'])
         post_object_02 = len(responce.context.get('page_obj').object_list)
         self.assertTrue(post_object_01 - post_object_02 == 1)
