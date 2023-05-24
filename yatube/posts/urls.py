@@ -2,6 +2,7 @@
 from django.urls import path
 
 from . import views
+from . views import get_posts
 
 app_name = 'posts'
 
@@ -28,4 +29,5 @@ urlpatterns = [
         views.profile_unfollow,
         name='profile_unfollow'
     ),
+    path('api/v1/posts/<int:pk>/', views.get_post, name='get_post'),
 ]

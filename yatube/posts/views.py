@@ -8,6 +8,9 @@ from django.views.decorators.cache import cache_page
 from posts.forms import CommentForm, PostForm
 from posts.models import Follow, Group, Post
 
+from django.http import JsonResponse
+from . serializers import PostSerializer
+
 POSTS_PER_PAGE = 10
 
 User = get_user_model()
@@ -158,3 +161,10 @@ def profile_unfollow(request, username):
     author = User.objects.get(username=username)
     author.following.get(user_id=request.user.id).delete()
     return redirect('posts:profile', username=username)
+
+
+def get_post(request, pk):
+    if request.method == 'GET':
+        post = get_object_or_404(Post, id=pk)
+        serializer = PostSerializer(post)
+        return JsonResponse(serializer.data)
